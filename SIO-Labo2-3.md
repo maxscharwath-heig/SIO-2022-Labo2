@@ -31,7 +31,7 @@ Le contexte de ce travail est d'effectuer la modélisation d'un problème d'ordo
 
 Nous connaissons les constantes suivantes:
 
-Pour chaque tâche $i = 1,..,n$:
+Pour chaque tâche $i = 1,...,n$:
 
 - Sa date de disponibilité (date de début au plus tôt, release date) $r_i$
 
@@ -54,10 +54,10 @@ $x_i >= r_i$, pour tout i
 On defini le retard (tardiness) Ti de la tâche i par
 - $T_i = {\displaystyle \max_{i=1,...,n} (0, x_i + p_i - d_i)}$
 
-- $n_i{_j} $ : indique si la tache i s'execute sur la machine j, $i=1,...,n$, $j=1,...,m$
+- $e_{ij}$ : indique si la tache i s'execute sur la machine j, $i=1,...,n$, $j=1,...,m$
 
 $$
-n_i{_j} = \left\{
+e_{ij} = \left\{
     \begin{array}{ll}
         1 & \text{si la tâche $i$ est executé sur la machine $j$} \\
         0 & \text{sinon.}
@@ -71,19 +71,66 @@ Minimiser $z= {\displaystyle \frac{1}{n}\sum_{i=1}^{n} T_i}$
 
 ## Définition des contraintes
 
-- 1 tâche sur une seule machine
+- Une tâche n'est executé qu'une seule fois et sur une unique machine
 
--> somme des N_i = 1
+  ${\displaystyle \sum_{i=1}^{n}}e_{ij} = 1 \qquad j=1,...,m$
 
 L'exécution de chaque tâche ne peut commencer avant sa date de disponibilité.
 
-- La tâche suivante doit être exécuté après la date de fin + le retard de la tâche précédente
-  pour chaque paire {i, j} de tâches différentes SI elle sont sur la même machine
+- La tâche suivante doit être exécuté après la date de fin + le retard de la tâche précédente si les taches i et j sont sur la même machine
+
+Disjonction:
+
+On introduit une variable binaire $y_{ij}$ pour chaque paire $\{i,j\}$ de tâches différentes sur une même machine et dont l'interprétation est:
+
+$$
+y_{ij} = \left\{
+    \begin{array}{ll}
+        1 & \text{si la tâche $i$ est executé avant la tâche $j$ sur la même machine} \\
+        0 & \text{sinon.}
+    \end{array}
+\right.
+$$
+
+Ainsi on a pour tout couple de tâche $\{i,j\}$
+
+  $x_i + p_i + T_i − x_j <= M(1 − y_{ij})$
+
+  $x_j + p_j + T_j − x_i <= M y_{ij}$
+
+  $\qquad i=1,...,n, j=1,...,m$
+
+multiplier par $e_{ij}$
+
+
+// TODO: il faut trouver comment ajouter à la disjonction comment appliquer uniquement ces deux contraintes seulement si i et j sont sur la même machine
+
+meme machine = ei1 + ej1 = 2
+
+-----
+
+kdo de noel de $JF_{heche}$: 
+
+Uik: 1 si tache i s'execute sur machine k, 0 sinon
+Pour une paire {i,j} de tache que vaut 2-Uik-Ujk ?
+
+Xik = date de debut de i sur k si i est executé sur k, 0 sinon
+
+Contrainte Xik = 0 si Uik = 0:
+
+xik <= M * Uik
+
+i ne debute pas son execution avant sa date
+
+Xik > ri * Uik k = 1 à m ( car r1 est une constante )
+
+décision: où et quand
+
+----
+
+pour chaque paire {i, j} de tâches différentes SI elle sont sur la même machine
   , soit la tâche i termine son exécution
-  avant que la tâche j ne débute la sienne soit c’est l’inverse. Toute solution admissible
-  doit donc vérifier
+  avant que la tâche j ne débute la sienne soit c’est l’inverse
 
-  changer ->
-  xi + pi <= xj ou xj + pj <= xi 1 <= i < j <= n (ajouter le retard)
 
-Non négativité de $T_i$, $X_i$
+Non négativité de $T_i$, $x_i$
