@@ -51,6 +51,8 @@ L’exécution de chaque tâche i ne peut commencer avant sa date de disponibili
 
 $x_i >= r_i$, pour tout i
 
+## Définition des variables auxiliaires
+
 On defini le retard (tardiness) Ti de la tâche i par
 - $T_i = {\displaystyle \max_{i=1,...,n} (0, x_i + p_i - d_i)}$
 
@@ -107,6 +109,20 @@ multiplier par $e_{ij}$
 
 meme machine = ei1 + ej1 = 2
 
+
+
+pour chaque paire {i, j} de tâches différentes SI elle sont sur la même machine
+  , soit la tâche i termine son exécution
+  avant que la tâche j ne débute la sienne soit c’est l’inverse
+
+
+Non négativité de $T_i$, $x_i$
+
+
+
+
+
+
 -----
 
 kdo de noel de $JF_{heche}$: 
@@ -127,10 +143,3 @@ Xik > ri * Uik k = 1 à m ( car r1 est une constante )
 décision: où et quand
 
 ----
-
-pour chaque paire {i, j} de tâches différentes SI elle sont sur la même machine
-  , soit la tâche i termine son exécution
-  avant que la tâche j ne débute la sienne soit c’est l’inverse
-
-
-Non négativité de $T_i$, $x_i$
