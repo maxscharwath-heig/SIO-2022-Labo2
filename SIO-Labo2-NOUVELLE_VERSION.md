@@ -29,32 +29,23 @@ header-includes:
 
 Le contexte de ce travail est d'effectuer la modélisation d'un problème d'ordonnancement, consistant à trouver un plan d'ordonnancement permettant de répartir n tâches, devant toutes être réalisée, en disposant de m machines différentes (travail en parrallèle), cela en minimisant le retard moyen de l'éxécution des tâches.
 
-Nous connaissons les constantes suivantes:
+Nous connaissons les **constantes** suivantes:
 
 Pour chaque tâche $i = 1,...,n$:
 
-- Sa date de disponibilité (date de début au plus tôt, release date) $r_i$
+- Sa **date de disponibilité** (date de début au plus tôt, release date): $r_i$
 
-- Sa date d’échéance (date de fin au plus tard, due date) $d_i$
+- Sa **date d’échéance** (date de fin au plus tard, due date): $d_i$
 
-- Son temps d’exécution (durée de réalisation, processing time) $p_i$
+- Son **temps d’exécution** (durée de réalisation, processing time): $p_i$
 
-On supposera, sans perte de généralité, que la plus petite date de disponibilité est égale à 0 et que les données sont cohérentes et vérifient, en particulier, $r_i >= 0$ et $p_i >= 0$ pour chaque tâche $i = 1,..,n$.
+On supposera, sans perte de généralité, que la plus petite date de disponibilité est égale à 0 et que les données sont cohérentes et vérifient, en particulier, $r_i \geq 0$ et $p_i \geq 0$ pour chaque tâche $i = 1,..,n$.
 
 ## Définition des variables de décision
 
-Nous définissons la variable de décision suivante:
+Pour trouver un ordonnancement de n tâches sur m machines, il va nous falloir répartir ces tâches de manière à ce qu'un tâche $i = 1,...,n$ soit traitée sur une unique machine $k = 1,...,m$. Pour cela il nous faut donc définir les variables de décision suivantes:
 
-$$
-x_{ik} = \left\{
-    \begin{array}{ll}
-        \text{Date de début de la tâche i sur la machine k } & \text{si i est executé sur k} \\
-        0 & \text{sinon}
-    \end{array}
-\right.
-$$
-
-Nous définissons la variable binaire:
+Une variable binaire:
 
 $$
 U_{ik} = \left\{
@@ -65,39 +56,39 @@ U_{ik} = \left\{
 \right.
 $$
 
+ainsi qu'une seconde variable binaire:
+
+$$
+x_{ik} = \left\{
+    \begin{array}{ll}
+        \text{Date de début de la tâche i sur la machine k } & \text{si i est executé sur k} \\
+        0 & \text{sinon}
+    \end{array}
+\right.
+$$
 
 ## Définition des variables auxiliaires
 
-On defini le retard (tardiness) Ti de la tâche i sur la machine k par
-- $T_i = {\displaystyle \max_{i=1,...,n} (0, \sum_{k=1}^{m}x_{ik} + p_i - d_i)}$
+Afin de pouvoir connaître le retard de chaque tâche sur sa machine respective, nous définissons la variable $T_i$, correspondant au retard (tardiness) de la tâche i $i = 1,...,n$ lors de son exécution:
 
-On introduit une variable auxiliaire binaire $y_{ij}$ pour chaque paire $\{i,j\}$ de tâches différentes sur une même machine et dont l'interprétation est:
+$$T_i = {\displaystyle \max (0, \sum_{k=1}^{m}(x_{ik} + p_i - d_i))}$$
+
+\newpage
+
+On introduit une variable auxiliaire binaire $y_{ij}$,  pour chaque paire $\{i,j\}$, $i, j = 1,...,n$ de tâches différentes sur une même machine et dont l'interprétation est:
 
 $$
 y_{ij} = \left\{
     \begin{array}{ll}
         1 & \text{si la tâche est executé avant la tâche j sur la même machine} \\
-        0 & \text{sinon} \\
+        0 & \text{si i et j ne sont pas exécutés sur la même machine} \\
         0 & \text{sinon}
     \end{array}
-    \text{i = 1,...,n, j = 1,...n}
+    \text{$i = 1,...,n, j = 1,...n$}
 \right.
 $$
 
-Cette contrainte se linéairise de la manière suivante:
-
-TODO: Il faut définir la constante M = max ri + somme de tous les pi, ayant une valeur suffisamment grande. (peut etre mettre ça plus haut)
-
-
-<!-- linéarisation:
-xik + pi - xjk <= M * (1 - yij) + M * (1 - Uik) + M * (1 - Ujk)
-xik + pi - xjk <= M * (1 - yij) + M * (Uik) + M * (1 - Ujk)
-xi + pi - xjk <= M * (1 - yij) + M * (1 - Uik) + M * (1 -Ujk)
-xik + pi - xjk <= M * (1 - yij) + M * Uik + M * Ujk
-xik + pi - xjk <= M * yij + M * (1 - Uik) + M * (1 - Ujk)
-xik + pi - xjk <= M * yij + M * (Uik) + M * (1 - Ujk)
-xik + pi - xjk <= M * yij + M * (1 - Uik) + M * (Ujk)
-xik + pi - xjk <= M * yij + M * (Uik) + M * (Ujk) -->
+qui se linéarise de la manière suivante:
 
 $$
 y_{ij} = \left\{
@@ -108,33 +99,37 @@ y_{ij} = \left\{
         x_{ik} + p_{i} - x_{jk} <= M * (1 - y_{ij}) + M * U_{ik} + M * U_{jk} \\
         x_{ik} + p_{i} - x_{jk} <= M * y_{ij} + M * (1 - U_{ik}) + M * (1 - U_{jk}) \\
         x_{ik} + p_{i} - x_{jk} <= M * y_{ij} + M * (Uik) + M * (1 - U_{jk}) \\
-        x_{ik} + p_{i} - x_{jk} <= M * y_{ij} + M * (1 - U_{ik}) + M * (U_{jk}) \\
-        x_{ik} + p_{i} - x_{jk} <= M * y_{ij} + M * (U_{ik}) + M * (U_{jk}) \\
+        x_{ik} + p_{i} - x_{jk} <= M * y_{ij} + M * (1 - U_{ik}) + M * U_{jk} \\
+        x_{ik} + p_{i} - x_{jk} <= M * y_{ij} + M * U_{ik} + M * U_{jk} \\
     \end{array}
     \text{i,j = 1,...,n, k = 1,...m}
 \right.
 $$
 
+La constante $M$ devant avoir une valeurs suffisamment grande, nous la définissons à:
 
-TODO
+$$M = {\displaystyle \max (r_i) + \sum_{i=1}^{n}p_i }$$
 
-<!-- - $e_{ij}$ : indique si la tache i s'execute sur la machine j, $i=1,...,n$, $j=1,...,m$
+correspondant à la date de disponibilité de la tâche s'exécutant le plus tard additionné à la somme du temps d'exécution de toutes les tâches.
 
-$
-e_{ij} = \left\{
-    \begin{array}{ll}
-        1 & \text{si la tâche $i$ est executé sur la machine $j$} \\
-        0 & \text{sinon.}
-    \end{array}
-\right.
-$
--->
+\newpage
 
 ## Définition de la fonction objectif
 
-Minimiser $z= {\displaystyle \frac{1}{n}\sum_{i=1}^{n} T_i}$
+Nous recherchons un ordonnancement répartissant n tâches sur m machines différentes, qui minimum le **retards moyen** de l'exécution des tâches.
+
+Minimiser $$z= {\displaystyle \frac{1}{n}\sum_{i=1}^{n} T_i}$$
+
+Avec, pour rappel: $$T_i = {\displaystyle \max (0, \sum_{k=1}^{m}(x_{ik} + p_i - d_i))}, i = 1,...n$$
 
 ## Définition des contraintes
+
+Nous allons établir une série de contraintes pour faire respecter la cohérence et les particularités du problème d'ordonnancement:
+
+(1) Une tâche n'est executé qu'une seule fois et sur une unique machine, se traduisant:
+
+$$ \sum{U_{ik}} = 1 $$
+
 
 <!-- 
 $
@@ -148,9 +143,9 @@ $
 $
 -->
 
-- Une tâche n'est executé qu'une seule fois et sur une unique machine
+- 
 
-sum Uik = 1, i 1 à n et l 1 à m
+sum Uik = 1, i 1 à n et k 1 à m
 
   <!-- ${\displaystyle \sum_{i=1}^{n}}e_{ij} = 1 \qquad j=1,...,m$ -->
 
