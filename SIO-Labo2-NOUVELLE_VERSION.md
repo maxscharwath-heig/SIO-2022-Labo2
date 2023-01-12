@@ -56,7 +56,7 @@ U_{ik} = \left\{
 \right.
 $$
 
-ainsi qu'une seconde variable binaire:
+ainsi qu'une seconde variable:
 
 $$
 x_{ik} = \left\{
@@ -66,6 +66,8 @@ x_{ik} = \left\{
     \end{array}
 \right.
 $$
+
+todo: xik = r_i * uik
 
 ## Définition des variables auxiliaires
 
@@ -108,7 +110,7 @@ $$
 
 La constante $M$ devant avoir une valeurs suffisamment grande, nous la définissons à:
 
-$$M = {\displaystyle \max (r_i) + \sum_{i=1}^{n}p_i }$$
+$$M = {\displaystyle \max_{i=1,...,n} (r_i) + \sum_{i=1}^{n}p_i }$$
 
 correspondant à la date de disponibilité de la tâche s'exécutant le plus tard additionné à la somme du temps d'exécution de toutes les tâches.
 
@@ -120,7 +122,7 @@ Nous recherchons un ordonnancement répartissant n tâches sur m machines diffé
 
 Minimiser $$z= {\displaystyle \frac{1}{n}\sum_{i=1}^{n} T_i}$$
 
-Avec, pour rappel: $$T_i = {\displaystyle \max (0, \sum_{k=1}^{m}(x_{ik} + p_i - d_i))}, i = 1,...n$$
+Avec, pour rappel: $$T_i = {\displaystyle \max (0, \sum_{k=1}^{m}(x_{ik}) + p_i - d_i)}, i = 1,...n$$
 
 ## Définition des contraintes
 

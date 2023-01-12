@@ -1,0 +1,19 @@
+/* Contrainte qui vérifie que la date de début (xi) est au moins en même temps que la date de disponibilité (ri) */
+subject to StartAfterRelease{i in Tasks}:
+	StartingDate[i] >= ReleaseDate[i];
+
+/* Contrainte qui vérifie que l’exécution (xi + pi) de chaque tâche i se termine au plus tard à sa date d'échéance (di) */
+subject to ExecBeforeDue{i in Tasks}:
+	StartingDate[i] + ProcessingTime[i] <= DueDate[i];
+
+/* Variable de décision binaire pour chaque paire {i, j} de tâches différentes, vaut 1 si i exécutée avant j sinon 0 */
+var ExecutedBefore{(i,j) in Tasks cross Tasks}, binary;
+
+/* Contrainte vérifiant que pour chaque paire {i, j} de tâches, 
+   soit la tâche i termine son exécution avant que la tâche j ne débute soit c’est l’inverse. */
+subject to ExecuteBefore1{(i,j) in Tasks cross Tasks: i < j}:
+	StartingDate[i] + ProcessingTime[i] - StartingDate[j] <= MaxDueDate * (1 - ExecutedBefore[i, j]);
+
+subject to ExecuteBefore2{(i,j) in Tasks cross Tasks: i < j}:
+    StartingDate[j] + ProcessingTime[j] - StartingDate[i] <= MaxDueDate * ExecutedBefore[i, j];	
+
