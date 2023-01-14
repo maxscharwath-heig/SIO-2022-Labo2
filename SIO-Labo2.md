@@ -130,10 +130,11 @@ Nous allons établir une série de contraintes pour faire respecter la cohérenc
 
 (1) Une tâche n'est executé qu'une seule fois et sur une unique machine, se traduisant:
 
-$$ \sum{U_{ik}} = 1 $$
+$$ \sum_{i=1, k=1}^{n, m}{U_{ik}} = 1 $$
 
+TODO: pas sur que cette notation soit valide -> double somme ?
 
-<!-- 
+<!--
 $
 \begin{subequations}
     \renewcommand{\theequation}{\arabic{equation}}
@@ -143,17 +144,14 @@ $
     \end{align}
 \end{subequations}
 $
--->
-
-- 
-
 sum Uik = 1, i 1 à n et k 1 à m
+-->
 
   <!-- ${\displaystyle \sum_{i=1}^{n}}e_{ij} = 1 \qquad j=1,...,m$ -->
 
 - L'exécution de chaque tâche ne peut commencer avant sa date de disponibilité
 
-Xik >= ri * Uik, pour k = 1 à m 
+$$ X_{ik} >= r_{i} * U_{ik} \qquad i=1,..,n \qquad j=1,...,m $$
 
 - La tâche ne s'exécute pas sur un autre machine que celle prévue
 
@@ -189,7 +187,7 @@ pour chaque paire {i, j} de tâches différentes SI elle sont sur la même machi
   avant que la tâche j ne débute la sienne soit c’est l’inverse
 
 
-Non négativité de 
+Non négativité de
 
 
 
@@ -198,7 +196,7 @@ Non négativité de
 
 -----
 
-kdo de noel de $JF_{heche}$: 
+kdo de noel de $JF_{heche}$:
 
 Uik: 1 si tache i s'execute sur machine k, 0 sinon
 Pour une paire {i,j} de tache que vaut 2-Uik-Ujk ?
