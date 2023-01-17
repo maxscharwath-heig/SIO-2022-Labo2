@@ -1,13 +1,13 @@
 /*
  * SIO - Labo 2
- * Modélisation du problème d'ordonnancement de tâches
- * sur machines parallèles
- *
- * Nicolas Crausaz  Maxime Scharwath
+ * Modélisation du problème d'ordonnancement de tâches sur machines parallèles
+ * 
+ * Nicolas Crausaz et Maxime Scharwath
+ * 17.01.2023
  */
 
 /*
- * Ensembles et constantes
+ * Définition des ensembles et constantes
  */
 
 /* Ensemble des tâches à exécuter */
@@ -43,9 +43,12 @@ var StartingDate{(i, k) in Tasks cross Machines} >= 0;
 /* Variable auxiliaire (Ti) correspondant au retard (tardiness) de la tâche i */
 var TaskTardiness{i in Tasks} >= 0;
 
-/* var TaskTardiness{i in Tasks} = max(0, sum{k in Machines}(StartingDate[i, k]) + ProcessingTime[i] - DueDate[i]); */
-
-
+/* Variable de décision binaire (yij pour chaque paire {i, j} de tâches différentes, 
+ * vaut 1 si i exécutée avant j sur la même machine,
+ * sinon 0 si i n'est pas exécutée sur la même machine que j,
+ * sinon 0
+ */
+var ExecutedBefore{(i,j) in Tasks cross Tasks}, binary;
 
 /* 
  * Contraintes
@@ -62,14 +65,6 @@ subject to MaxTaskTardiness{i in Tasks}:
 /* Une tâche i ne peut pas commencer avant que la tâche soit disponible */
 subject to StartAfterRelease{(i,k) in Tasks cross Machines}:
   StartingDate[i, k] >= ReleaseDate[i] * ExecutedOn[i,k];
-
-
-/* Variable de décision binaire (yij pour chaque paire {i, j} de tâches différentes, 
- * vaut 1 si i exécutée avant j sur la même machine,
- * sinon 0 si i n'est pas exécutée sur la même machine que j,
- * sinon 0
- */
-var ExecutedBefore{(i,j) in Tasks cross Tasks}, binary;
 
 /* Contrainte vérifiant que pour chaque paire {i, j} de tâches, 
    soit la tâche i termine son exécution avant que la tâche j ne débute soit c’est l’inverse. */
@@ -103,6 +98,25 @@ data;
 
 param NbMachines := 2;
 
+/* Jeu de données 1 */
+/*
+param : Jobs : ReleaseDate DueDate ProcessingTime := 
+  1   0   25  4
+  2   3   25  9
+  3   6   20  8;
+*/
+ 
+/* Jeu de données 2 */
+/*
+param : Jobs : ReleaseDate DueDate ProcessingTime := 
+  1   0   50  15
+  2   3   25  12
+  3   0   40   8
+  4   9   20   3
+  5  28   45   7;
+*/
+
+/* Jeu de données 3 */
 param : Tasks : ReleaseDate DueDate ProcessingTime :=
   1   25   50   15
   2   3    25   20
