@@ -34,7 +34,7 @@ param MaxTardiness := max{i in Tasks}ReleaseDate[i] + sum{i in Tasks}ProcessingT
  * Variables de décision
  */
 
-/* Variable binaire (Uik) indiquant si la tâche i est exécutée sur la machine k */
+/* Variable binaire (uik) indiquant si la tâche i est exécutée sur la machine k */
 var ExecutedOn{(i, k) in Tasks cross Machines}, binary;
 
 /* Variable de décision (xik) indiquant le temps de début d'exécution de la tâche i sur la machine k*/
@@ -43,11 +43,7 @@ var StartingDate{(i, k) in Tasks cross Machines} >= 0;
 /* Variable auxiliaire (Ti) correspondant au retard (tardiness) de la tâche i */
 var TaskTardiness{i in Tasks} >= 0;
 
-/* Variable de décision binaire (yij pour chaque paire {i, j} de tâches différentes, 
- * vaut 1 si i exécutée avant j sur la même machine,
- * sinon 0 si i n'est pas exécutée sur la même machine que j,
- * sinon 0
- */
+/* Variable de décision binaire (yij) pour chaque paire {i, j} de tâches différentes */
 var ExecutedBefore{(i,j) in Tasks cross Tasks}, binary;
 
 /* 
@@ -66,9 +62,8 @@ subject to MaxTaskTardiness{i in Tasks}:
 subject to StartAfterRelease{(i,k) in Tasks cross Machines}:
   StartingDate[i, k] >= ReleaseDate[i] * ExecutedOn[i,k];
 
-/* Contrainte vérifiant que pour chaque paire {i, j} de tâches, 
+/* Contraintes vérifiant que pour chaque paire {i, j} de tâches, 
    soit la tâche i termine son exécution avant que la tâche j ne débute soit c’est l’inverse. */
-
 subject to ExecuteIBeforeJOnK{(i,j) in Tasks cross Tasks, k in Machines: i < j}:
   StartingDate[i, k] + ProcessingTime[i] - StartingDate[j, k] <= MaxTardiness * (3 - ExecutedBefore[i, j] - ExecutedOn[i,k] - ExecutedOn[j,k]);
 
@@ -76,12 +71,18 @@ subject to ExecuteJBeforeIOnK{(i,j) in Tasks cross Tasks, k in Machines: i < j}:
   StartingDate[j, k] + ProcessingTime[j] - StartingDate[i, k] <= MaxTardiness * (2 + ExecutedBefore[i, j] - ExecutedOn[i,k] - ExecutedOn[j,k]);
 
 
-/* Fonction objectif */
+/* 
+ *  Fonction objectif
+ */
 minimize MeanTardiness: 
 	sum{i in Tasks} TaskTardiness[i] / card(Tasks);
 
 
 solve;
+
+/*
+ * Affichage du résultat
+ */
 
 printf "\n\nOrdonnancement minimisant le retard moyen \n";
 for {k in Machines} {
@@ -91,32 +92,15 @@ for {k in Machines} {
   }
 }
 printf "\nRetard moyen %s et retard total: %s \n", MeanTardiness, MeanTardiness * card(Tasks);
-printf "Max Tardiness (M) = %s \n", MaxTardiness;
+printf "Valeur de la constante Max Tardiness (M) = %s \n", MaxTardiness;
 
 
 data;
 
+/* Choix du nombre de machines */
 param NbMachines := 2;
 
 /* Jeu de données 1 */
-/*
-param : Jobs : ReleaseDate DueDate ProcessingTime := 
-  1   0   25  4
-  2   3   25  9
-  3   6   20  8;
-*/
- 
-/* Jeu de données 2 */
-/*
-param : Jobs : ReleaseDate DueDate ProcessingTime := 
-  1   0   50  15
-  2   3   25  12
-  3   0   40   8
-  4   9   20   3
-  5  28   45   7;
-*/
-
-/* Jeu de données 3 */
 param : Tasks : ReleaseDate DueDate ProcessingTime :=
   1   25   50   15
   2   3    25   20
@@ -126,4 +110,16 @@ param : Tasks : ReleaseDate DueDate ProcessingTime :=
   6   17   29   9
   7   0    32   16
   8   41   50   5;
-end;
+
+/* Jeu de données 2 */
+/*
+param : Tasks : ReleaseDate DueDate ProcessingTime :=
+  1   0    37   16
+  2   11   53   26
+  3   0    39   25
+  4   20   33   7
+  5   9    32   20
+  6   0    28   9
+  7   4    34   25;
+
+*/

@@ -1,0 +1,12 @@
+data;
+
+param : Jobs : ReleaseDate DueDate ProcessingTime :=
+  1   0    37   16
+  2   11   53   26
+  3   0    39   25
+  4   20   33   7
+  5   9    32   20
+  6   0    28   9
+  7   4    34   25;
+
+end;
