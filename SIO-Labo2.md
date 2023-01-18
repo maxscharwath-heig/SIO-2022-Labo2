@@ -170,7 +170,7 @@ $$ x_{ik}, T_i \geq 0 $$
 
 \newpage
 
-Le PL résultant sera:
+Le programme linéaire résultant sera:
 
 $$ \text{Minimiser} \qquad z = {\displaystyle \frac{1}{n} \sum_{i=1}^{n}{T_i}} $$
 
